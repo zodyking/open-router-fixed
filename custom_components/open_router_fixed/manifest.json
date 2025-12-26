@@ -5,7 +5,6 @@
   "config_flow": true,
   "dependencies": ["conversation"],
   "documentation": "https://www.home-assistant.io/integrations/open_router/",
-  "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/zodyking/open-router-fixed/issues",
   "requirements": ["httpx>=0.24.0"],
