@@ -64,6 +64,11 @@ class OpenRouterAgent(conversation.AbstractConversationAgent):
         """Return a list of supported languages."""
         return "*"
 
+    @property
+    def name(self) -> str:
+        """Return the name of the agent."""
+        return f"OpenRouter ({self.coordinator.model})"
+
     async def async_process(
         self, user_input: conversation.ConversationInput
     ) -> conversation.ConversationResult:

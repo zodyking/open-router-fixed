@@ -36,6 +36,20 @@ class InvalidAuth(HomeAssistantError):
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_API_KEY): str,
+        vol.Required(CONF_MODEL, default=DEFAULT_MODEL): str,
+        vol.Required(CONF_MAX_TOKENS, default=DEFAULT_MAX_TOKENS): vol.All(
+            vol.Coerce(int), vol.Range(min=1, max=32000)
+        ),
+        vol.Optional(CONF_TEMPERATURE, default=DEFAULT_TEMPERATURE): vol.All(
+            vol.Coerce(float), vol.Range(min=0.0, max=2.0)
+        ),
+        vol.Optional(CONF_TOP_P): vol.All(vol.Coerce(float), vol.Range(min=0.0, max=1.0)),
+        vol.Optional(CONF_FREQUENCY_PENALTY): vol.All(
+            vol.Coerce(float), vol.Range(min=-2.0, max=2.0)
+        ),
+        vol.Optional(CONF_PRESENCE_PENALTY): vol.All(
+            vol.Coerce(float), vol.Range(min=-2.0, max=2.0)
+        ),
     }
 )
 
@@ -86,10 +100,18 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
-            # Store only API key in data, defaults will be used
+            # Store API key in data and model/parameters in options
             return self.async_create_entry(
                 title="OpenRouter",
                 data={CONF_API_KEY: user_input[CONF_API_KEY]},
+                options={
+                    CONF_MODEL: user_input.get(CONF_MODEL, DEFAULT_MODEL),
+                    CONF_MAX_TOKENS: user_input.get(CONF_MAX_TOKENS, DEFAULT_MAX_TOKENS),
+                    CONF_TEMPERATURE: user_input.get(CONF_TEMPERATURE, DEFAULT_TEMPERATURE),
+                    CONF_TOP_P: user_input.get(CONF_TOP_P),
+                    CONF_FREQUENCY_PENALTY: user_input.get(CONF_FREQUENCY_PENALTY),
+                    CONF_PRESENCE_PENALTY: user_input.get(CONF_PRESENCE_PENALTY),
+                },
             )
 
         return self.async_show_form(
