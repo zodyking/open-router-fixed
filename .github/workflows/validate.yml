@@ -37,3 +37,4 @@ jobs:
           test -f custom_components/open_router_fixed/config_flow.py || exit 1
           echo "✓ Integration structure is valid"
 
+
