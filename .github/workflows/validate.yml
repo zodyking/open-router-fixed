@@ -1,0 +1,39 @@
+name: Validate Integration
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install homeassistant
+
+      - name: Validate manifest
+        run: |
+          python -c "import json; json.load(open('custom_components/open_router_fixed/manifest.json'))"
+          echo "✓ Manifest is valid JSON"
+
+      - name: Check integration structure
+        run: |
+          test -f custom_components/open_router_fixed/manifest.json || exit 1
+          test -f custom_components/open_router_fixed/__init__.py || exit 1
+          test -f custom_components/open_router_fixed/config_flow.py || exit 1
+          echo "✓ Integration structure is valid"
+
